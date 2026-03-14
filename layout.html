@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alenor's Website</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    /* ── Works Cards (redesigned) ── */
+    .wk-card {
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,0,64,0.25);
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: border-color .25s, box-shadow .25s, transform .25s;
+      position: relative;
+    }
+    .wk-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #ff0040, #00ff41, transparent);
+      opacity: 0; transition: opacity .25s;
+    }
+    .wk-card::after {
+      content: '';
+      position: absolute; bottom: 0; right: 0;
+      width: 12px; height: 12px;
+      border-bottom: 1px solid rgba(255,0,64,0.5);
+      border-right:  1px solid rgba(255,0,64,0.5);
+    }
+    .wk-card:hover { border-color: #ff0040; box-shadow: 0 0 28px rgba(255,0,64,0.2); transform: translateY(-4px); }
+    .wk-card:hover::before { opacity: 1; }
+
+    .wk-thumb {
+      width: 100%; aspect-ratio: 16/9;
+      background: rgba(255,0,64,0.06);
+      border-bottom: 1px solid rgba(255,0,64,0.18);
+      position: relative; overflow: hidden;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .wk-thumb img { width:100%; height:100%; object-fit:cover; display:block; transition: transform .4s, opacity .3s; opacity:.88; }
+    .wk-card:hover .wk-thumb img { transform:scale(1.04); opacity:1; }
+
+    .wk-thumb-placeholder {
+      width:100%; height:100%;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+      background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,0,64,0.03) 10px, rgba(255,0,64,0.03) 20px);
+    }
+
+    .wk-thumb-overlay {
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,.75) 100%);
+    }
+
+    .wk-view-overlay {
+      position:absolute; inset:0;
+      background: rgba(255,0,64,0.18);
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; transition:opacity .25s;
+      font-family:'Orbitron',sans-serif; font-size:0.75rem;
+      color:white; letter-spacing:2px; gap:8px;
+    }
+    .wk-card:hover .wk-view-overlay { opacity:1; }
+
+    .wk-num-badge {
+      position:absolute; top:10px; left:10px;
+      font-family:'Orbitron',sans-serif; font-size:0.55rem;
+      letter-spacing:2px; padding:3px 10px;
+      background:rgba(0,0,0,0.75);
+      border:1px solid #ff0040; color:#ff0040;
+      backdrop-filter:blur(4px);
+    }
+    .wk-cat-badge {
+      position:absolute; top:10px; right:10px;
+      font-family:'Orbitron',sans-serif; font-size:0.55rem;
+      letter-spacing:1px; padding:3px 9px;
+      color:white;
+    }
+
+    .wk-body { padding:16px 18px 14px; flex:1; display:flex; flex-direction:column; gap:8px; }
+    .wk-title {
+      font-family:'Orbitron',sans-serif; font-size:0.82rem;
+      font-weight:700; color:#fff; letter-spacing:1px;
+      text-transform:uppercase; line-height:1.25;
+    }
+    .wk-desc {
+      font-size:0.8rem; color:rgba(255,255,255,0.65); line-height:1.6; flex:1;
+    }
+    .wk-meta { display:flex; gap:6px; flex-wrap:wrap; }
+    .wk-meta-tag {
+      font-family:'Orbitron',sans-serif; font-size:0.55rem;
+      letter-spacing:2px; padding:2px 8px;
+      border:1px solid rgba(255,0,64,0.3); color:rgba(255,255,255,0.4);
+      text-transform:uppercase;
+    }
+
+    .wk-footer { padding:0 18px 16px; display:flex; gap:8px; }
+    .wk-btn-view {
+      flex:1; display:inline-flex; align-items:center; justify-content:center; gap:7px;
+      padding:8px 14px;
+      font-family:'Orbitron',sans-serif; font-size:0.6rem; letter-spacing:2px;
+      text-decoration:none; background:transparent;
+      border:1px solid #ff0040; color:#ff0040;
+      cursor:pointer; transition:all .2s;
+    }
+    .wk-btn-view:hover { background:rgba(255,0,64,0.12); box-shadow:0 0 10px rgba(255,0,64,.2); color:#ff0040; }
+
+    .wk-btn-dl {
+      display:inline-flex; align-items:center; justify-content:center; gap:7px;
+      padding:8px 14px;
+      font-family:'Orbitron',sans-serif; font-size:0.6rem; letter-spacing:2px;
+      text-decoration:none; background:transparent;
+      border:1px solid rgba(0,255,65,0.5); color:#00ff41;
+      cursor:pointer; transition:all .2s;
+    }
+    .wk-btn-dl:hover { background:rgba(0,255,65,0.1); box-shadow:0 0 10px rgba(0,255,65,.15); }
+
+    .wk-btn-edit {
+      display:inline-flex; align-items:center; justify-content:center; gap:7px;
+      padding:8px 14px;
+      font-family:'Orbitron',sans-serif; font-size:0.6rem; letter-spacing:2px;
+      text-decoration:none; background:transparent;
+      border:1px solid rgba(255,165,0,0.5); color:#ffa500;
+      cursor:pointer; transition:all .2s;
+    }
+    .wk-btn-edit:hover { background:rgba(255,165,0,0.1); }
+
+    /* filter pills */
+    .filter-pill {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,0,64,0.3);
+      color: white; font-family:'Orbitron',sans-serif;
+      font-size:0.65rem; padding:6px 16px;
+      cursor:pointer; transition:all .2s; letter-spacing:1px;
+    }
+    .filter-pill:hover, .filter-pill.active { background:#ff0040; border-color:#ff0040; }
+
+    .empty-state { text-align:center; padding:50px; font-family:'Orbitron',sans-serif; color:rgba(255,255,255,0.3); }
+    .empty-state i { font-size:3rem; margin-bottom:12px; display:block; }
+    .empty-state p { font-size:0.7rem; letter-spacing:2px; }
+
+    /* ── PDF Viewer Modal ── */
+    #pdfModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(6px);
+      animation: fadeIn 0.25s ease;
+    }
+    #pdfModal.show { display: flex; align-items: center; justify-content: center; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .pdf-modal-inner {
+      background: #0d0d1a;
+      border: 1px solid rgba(255, 0, 64, 0.4);
+      border-radius: 14px;
+      box-shadow: 0 0 40px rgba(255, 0, 64, 0.25);
+      width: 92vw;
+      max-width: 900px;
+      height: 88vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .pdf-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: rgba(255, 0, 64, 0.12);
+      border-bottom: 1px solid rgba(255, 0, 64, 0.3);
+      flex-shrink: 0;
+    }
+    .pdf-modal-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      color: #ff0040;
+      letter-spacing: 1px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 80%;
+    }
+    .pdf-modal-close {
+      background: rgba(255, 0, 64, 0.2);
+      border: 1px solid #ff0040;
+      color: #ff0040;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .pdf-modal-close:hover { background: #ff0040; color: white; }
+
+    #pdfFrame {
+      flex: 1;
+      width: 100%;
+      border: none;
+    }
+
+    /* ── Works Section Cards ── */
+    .work-card {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 0, 64, 0.2);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      cursor: pointer;
+    }
+    .work-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(255, 0, 64, 0.3);
+      border-color: #ff0040;
+    }
+    .work-card-thumb {
+      background: rgba(255, 0, 64, 0.08);
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid rgba(255, 0, 64, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    .work-card-thumb .pdf-icon {
+      font-size: 3.5rem;
+      color: #ff0040;
+      opacity: 0.7;
+      transition: transform 0.25s, opacity 0.25s;
+    }
+    .work-card:hover .pdf-icon { transform: scale(1.15); opacity: 1; }
+
+    .work-card-thumb .badge-type {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ff0040;
+      color: white;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.6rem;
+      padding: 3px 8px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+    }
+    .work-card-thumb .view-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 0, 64, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.25s;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      color: white;
+      letter-spacing: 2px;
+      gap: 8px;
+    }
+    .work-card:hover .view-overlay { opacity: 1; }
+
+    .work-card-body {
+      padding: 16px;
+    }
+    .work-card-body h6 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      color: #00ff41;
+      margin-bottom: 6px;
+    }
+    .work-card-body p {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .work-card-body .meta {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.4);
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    /* Upload area */
+    .upload-area {
+      border: 2px dashed rgba(255, 0, 64, 0.4);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      background: rgba(255, 0, 64, 0.04);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      font-family: 'Orbitron', sans-serif;
+    }
+    .upload-area:hover {
+      border-color: #ff0040;
+      background: rgba(255, 0, 64, 0.1);
+    }
+    .upload-area input[type="file"] { display: none; }
+
+    /* Category filter pills */
+    .filter-pill {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255, 0, 64, 0.3);
+      color: white;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      padding: 6px 14px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 1px;
+    }
+    .filter-pill:hover, .filter-pill.active {
+      background: #ff0040;
+      border-color: #ff0040;
+      color: white;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      font-family: 'Orbitron', sans-serif;
+      color: rgba(255,255,255,0.35);
+    }
+    .empty-state i { font-size: 3rem; margin-bottom: 10px; display: block; }
+    .empty-state p { font-size: 0.75rem; letter-spacing: 1px; }
+  </style>
+</head>
+<body style="font-family: Arial, sans-serif; background: url('https://i.imgur.com/OmTgVnw.gif') no-repeat center center fixed; background-size: cover; color: white;">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg sticky-top" style="background-color: rgba(0, 0, 0, 0.4); font-family: 'Orbitron', sans-serif;">
+  <div class="container">
+    <a class="navbar-brand text-light" href="#hero"><strong>Alenor's Portfolio</strong></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link active text-light" href="#hero">Home</a></li>
+        <li class="nav-item"><a class="nav-link text-light" href="#about">About</a></li>
+        <li class="nav-item"><a class="nav-link text-light" href="#achievements">Achievements</a></li>
+        <li class="nav-item"><a class="nav-link text-light" href="#projects">Projects</a></li>
+        <li class="nav-item"><a class="nav-link text-light" href="#skills">Skills</a></li>
+        <li class="nav-item"><a class="nav-link text-light" href="#works">Works</a></li>
+        <li class="nav-item"><a class="nav-link text-light" href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section id="hero" class="d-flex align-items-center" style="height: 100vh; background: transparent;">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6 text-center text-md-start">
+        <h1 class="mb-4" style="color: white; font-size: 4rem; font-family: 'Orbitron', monospace; text-shadow: 0 0 10px black;">
+          Hi, I'm <span style="color: white;">Alenor</span>
+        </h1>
+        <p class="lead" style="color: white; font-size: 1.5rem; font-family: 'Orbitron', monospace; text-shadow: 0 0 5px black;">
+          A passionate learner on a journey through Computer Science, fueled by curiosity and creativity. Dedicated to mastering the art of web development, problem-solving, and clean code, while embracing the endless potential of technology to make a positive impact.
+        </p>
+        <a href="#contact" class="btn mt-4 btn-lg" style="background-color: #ff0040; color: white; border: none; font-family: 'Orbitron', monospace; box-shadow: 0 0 10px #000;">Contact Me</a>
+      </div>
+      <div class="col-md-6 text-center">
+        <div style="background-color: #1a2238; width: 360px; height: 360px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: auto;">
+          <img src="https://i.imgur.com/f5wwczb.jpeg" alt="Profile Picture" class="img-fluid rounded-circle" style="width: 330px; height: 330px; object-fit: cover;">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About Me Section -->
+<section id="about" class="py-5">
+  <div class="container">
+    <h2 class="text-center mb-4" style="font-family: 'Orbitron'; text-shadow: 1px 1px 2px black; color: #ff0040;">About Me</h2>
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div style="background-color: rgba(0, 0, 0, 0.5); padding: 30px; border-radius: 10px; color: white;">
+          <blockquote style="font-family: 'Orbitron', sans-serif; font-size: 1.3rem; text-shadow: 1px 1px 2px black; margin-bottom: 1.5rem;">
+            Hello! I'm Alenor A. Antap, a Computer Science student from City College of Angeles, currently in section C203. I'm fascinated by the world of coding and enjoy exploring how websites are built and how technology can be used to solve everyday problems.
+          </blockquote>
+          <blockquote style="font-family: 'Orbitron', sans-serif; font-size: 1.3rem; text-shadow: 1px 1px 2px black;">
+            While I'm still in the process of learning and improving my programming skills, I enjoy practicing as much as I can with the goal of one day building my own website from scratch. I believe that creativity, consistency, and collaboration are key to turning ideas into something meaningful.
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Achievements Section -->
+<section id="achievements" class="container mt-5" style="font-family: 'Orbitron', sans-serif;">
+  <div style="background-color: rgba(0, 0, 0, 0.5); padding: 30px; border-radius: 10px; color: white;">
+    <h2 class="text-center mb-4" style="color: #ff0040;"><strong>My Achievements</strong></h2>
+    <p class="lead" style="text-indent: 30px;">
+      These achievements were all from when I was in high school, and they are very memorable to me. Each one represents a proud moment in my journey, reminding me of the hard work, challenges, and growth I experienced during those years. They've not only shaped my confidence but also motivated me to keep pushing forward and aim higher in everything I do
+    </p>
+  </div>
+  <div class="row row-cols-1 row-cols-md-3 g-4 mt-4">
+    <div class="col">
+      <div class="card h-100 bg-transparent border-0">
+        <img src="https://i.imgur.com/PtLjKC7.jpeg" class="card-img-top" alt="Graduation in G12" style="height: 250px; object-fit: cover; border-radius: 0; background: none;">
+        <div class="card-body" style="background-color: rgba(0, 0, 0, 0.5); border-radius: 10px;">
+          <h5 class="card-title" style="color: white;"><strong>Graduation</strong></h5>
+          <p class="card-text" style="color: white;">This achievement was earned during the 2022–2023 school year, when I was in Grade 12 and graduating from Angeles City National High School.</p>
+          <p class="text-muted">2024</p>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card h-100 bg-transparent border-0">
+        <img src="https://i.imgur.com/kdqxKdx.jpeg" class="card-img-top" alt="Amazing Race Champion" style="height: 250px; object-fit: cover; border-radius: 0; background: none;">
+        <div class="card-body" style="background-color: rgba(0, 0, 0, 0.5); border-radius: 10px;">
+          <h5 class="card-title" style="color: white;"><strong>With Honors</strong></h5>
+          <p class="card-text" style="color: white;">This achievement was from when I was in Grade 12 during the 2022–2023 school year, where I graduated with honors from Angeles City National High School.</p>
+          <p class="text-muted">2025</p>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card h-100 bg-transparent border-0">
+        <img src="https://i.imgur.com/mHuGiJX.jpeg" class="card-img-top" alt="Class President" style="height: 250px; object-fit: cover; border-radius: 0; background: none;">
+        <div class="card-body" style="background-color: rgba(0, 0, 0, 0.5); border-radius: 10px;">
+          <h5 class="card-title" style="color: white;"><strong>Badminton 3rd Runner Up</strong></h5>
+          <p class="card-text" style="color: white;">When I was in high school, I placed as the 3rd runner-up in a badminton tournament, which was a memorable experience that taught me discipline and sportsmanship.</p>
+          <p class="text-muted">2024 - Present</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Skills Section -->
+<section id="skills" class="py-5 text-white" style="background-color: transparent; font-family: 'Orbitron', sans-serif;">
+  <div class="container">
+    <h2 class="text-center mb-4" style="color: #ff0040;"><strong>Skills</strong></h2>
+    <p class="text-center lead mb-5">Technologies and tools I have encountered and learned throughout my first and second year of college.</p>
+    <div class="mb-5">
+      <h5 class="text-center mb-4" style="color: #ff0040;">Programming Languages</h5>
+      <div class="row text-center g-4">
+        <div class="col-md-3 col-6"><i class="devicon-c-plain skill-icon" style="font-size: 2.5rem;"></i><p>C</p><div class="progress" style="height: 20px;"><div class="progress-bar" style="width: 70%; background-color: #00ff41;">70%</div></div></div>
+        <div class="col-md-3 col-6"><i class="devicon-java-plain skill-icon" style="font-size: 2.5rem;"></i><p>Java</p><div class="progress" style="height: 20px;"><div class="progress-bar" style="width: 60%; background-color: #00ff41;">60%</div></div></div>
+        <div class="col-md-3 col-6"><i class="devicon-python-plain skill-icon" style="font-size: 2.5rem;"></i><p>Python</p><div class="progress" style="height: 20px;"><div class="progress-bar" style="width: 80%; background-color: #00ff41;">80%</div></div></div>
+        <div class="col-md-3 col-6"><i class="devicon-mysql-plain skill-icon" style="font-size: 2.5rem;"></i><p>MySQL</p><div class="progress" style="height: 20px;"><div class="progress-bar" style="width: 80%; background-color: #00ff41;">80%</div></div></div>
+      </div>
+    </div>
+    <div class="mb-5">
+      <h5 class="text-center mb-4" style="color: #ff0040;">Web Development</h5>
+      <div class="row text-center g-4">
+        <div class="col-md-3 col-6"><i class="devicon-html5-plain skill-icon" style="font-size: 2.5rem;"></i><p>HTML</p><div class="progress" style="height: 20px;"><div class="progress-bar" style="width: 50%; background-color: #00ff41;">50%</div></div></div>
+        <div class="col-md-3 col-6"><i class="devicon-css3-plain skill-icon" style="font-size: 2.5rem;"></i><p>CSS</p><div class="progress" style="height: 20px;"><div class="progress-bar" style="width: 50%; background-color: #00ff41;">50%</div></div></div>
+        <div class="col-md-3 col-6"><i class="devicon-javascript-plain skill-icon" style="font-size: 2.5rem;"></i><p>JavaScript</p><div class="progress" style="height: 20px;"><div class="progress-bar" style="width: 30%; background-color: #00ff41;">30%</div></div></div>
+        <div class="col-md-3 col-6"><i class="devicon-bootstrap-plain skill-icon" style="font-size: 2.5rem;"></i><p>Bootstrap</p><div class="progress" style="height: 20px;"><div class="progress-bar" style="width: 50%; background-color: #00ff41;">50%</div></div></div>
+      </div>
+    </div>
+    <div>
+      <h5 class="text-center mb-4" style="color: #ff0040;">Tools & IDEs</h5>
+      <div class="row text-center g-4">
+        <div class="col-md-3 col-6"><i class="devicon-photoshop-plain skill-icon" style="font-size: 2.5rem;"></i><p>Photoshop</p><div class="progress" style="height: 20px;"><div class="progress-bar" style="width: 60%; background-color: #00ff41;">60%</div></div></div>
+        <div class="col-md-3 col-6"><i class="devicon-figma-plain skill-icon" style="font-size: 2.5rem;"></i><p>Figma</p><div class="progress" style="height: 20px;"><div class="progress-bar" style="width: 60%; background-color: #00ff41;">60%</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Projects Section -->
+<section id="projects" class="py-5" style="font-family: 'Orbitron', sans-serif; background-color: transparent;">
+  <div class="container">
+    <h2 class="text-center mb-4" style="color: #ff0040;"><strong>Projects</strong></h2>
+    <div class="row g-4 justify-content-center">
+      <div class="col-lg-4 col-md-6 mb-3">
+        <div class="card text-white shadow-sm" style="background-color: rgba(0,0,0,0.5); border: none; border-radius: 10px;">
+          <img src="https://i.imgur.com/FLh2AZW.jpeg" alt="Counseling Booking Prototype" style="width: 100%; height: 200px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+          <div class="card-body text-center" style="padding: 20px;">
+            <h5 class="mb-3" style="color: #00ff41;">CUTQUEUE LOGIN PAGE</h5>
+            <p>A Prototype application project for login page in HCOMINT that we created in figma.</p>
+            <div class="d-flex justify-content-center gap-2 mt-3">
+              <a href="https://www.figma.com/proto/t3xp8MGmPPNPul6VwmvUzs/Untitled?node-id=19-71&t=rAP8m1BY7rIRQZWb-0" target="_blank" class="btn" style="background-color: #ff0040; color: white; border-radius: 50px; padding: 10px 20px; text-transform: uppercase; letter-spacing: 2px;">Live Demo</a>
+              <a href="https://www.figma.com/design/t3xp8MGmPPNPul6VwmvUzs/Untitled?node-id=0-1&p=f&t=rAP8m1BY7rIRQZWb-0" target="_blank" class="btn" style="background-color: #ff0040; color: white; border-radius: 50px; padding: 10px 20px; text-transform: uppercase; letter-spacing: 2px;">Repository</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 mb-3">
+        <div class="card text-white shadow-sm" style="background-color: rgba(0,0,0,0.5); border: none; border-radius: 10px;">
+          <img src="https://i.imgur.com/FLh2AZW.jpeg" alt="Counseling Dashboard Prototype" style="width: 100%; height: 200px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+          <div class="card-body text-center" style="padding: 20px;">
+            <h5 class="mb-3" style="color: #00ff41;">CUTQUEUE SETTINGS PAGE</h5>
+            <p>A Prototype application project for setting page in HCOMINT that we created in figma.</p>
+            <div class="d-flex justify-content-center gap-2 mt-3">
+              <a href="https://www.figma.com/proto/t3xp8MGmPPNPul6VwmvUzs/Untitled?node-id=236-286&t=rAP8m1BY7rIRQZWb-0" target="_blank" class="btn" style="background-color: #ff0040; color: white; border-radius: 50px; padding: 10px 20px; text-transform: uppercase; letter-spacing: 2px;">Live Demo</a>
+              <a href="https://www.figma.com/design/t3xp8MGmPPNPul6VwmvUzs/Untitled?node-id=0-1&p=f&t=rAP8m1BY7rIRQZWb-0" target="_blank" class="btn" style="background-color: #ff0040; color: white; border-radius: 50px; padding: 10px 20px; text-transform: uppercase; letter-spacing: 2px;">Repository</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKS & ACTIVITIES SECTION -->
+<section id="works" class="py-5" style="background-color: transparent;">
+  <div class="container">
+    <h2 class="text-center mb-2" style="font-family:'Orbitron',sans-serif; color:#ff0040;"><strong>Works &amp; Activities</strong></h2>
+    <p class="text-center mb-4" style="font-family:'Orbitron',sans-serif; color:rgba(255,255,255,0.5); font-size:0.7rem; letter-spacing:2px;">
+      CLICK ANY CARD TO VIEW &nbsp;·&nbsp; EDIT DIRECTLY IN HTML
+    </p>
+
+    <!-- Filter pills -->
+    <div class="d-flex flex-wrap justify-content-center gap-2 mb-5" id="filterPills">
+      <button class="filter-pill active" data-filter="practice">PRACTICE TASK</button>
+      <button class="filter-pill" data-filter="midterm">MIDTERM TASK</button>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         TASK CARDS — edit each card here directly
+         Fields per card:
+           data-category = "practice" | "midterm"
+           TASK-XX       = task number
+           wk-title      = task name
+           wk-desc       = description
+           wk-meta-tag   = extra tags (date, subject, etc.)
+           img src        = screenshot URL (or remove <img> for placeholder)
+           wk-btn-view   = file link (Google Drive or direct)
+           wk-btn-dl     = download link (auto-converted from same link)
+    ════════════════════════════════════════════ -->
+    <div class="row g-4" id="worksGrid">
+
+      <!-- ── CARD TEMPLATE (copy & paste to add more) ──
+      <div class="col-lg-4 col-md-6 work-item" data-category="practice">
+        <div class="wk-card">
+          <div class="wk-thumb" onclick="openFile('YOUR_LINK_HERE','Task Title')">
+            <div class="wk-thumb-placeholder">
+              <i class="fas fa-file-pdf" style="font-size:2.5rem;color:rgba(255,0,64,0.5);"></i>
+              <span style="font-family:'Orbitron',sans-serif;font-size:0.6rem;color:rgba(255,255,255,0.3);letter-spacing:2px;">NO PREVIEW</span>
+            </div>
+            <div class="wk-thumb-overlay"></div>
+            <span class="wk-num-badge">TASK-01</span>
+            <span class="wk-cat-badge" style="background:rgba(255,0,64,0.75);">PRACTICE</span>
+            <div class="wk-view-overlay"><i class="fas fa-eye"></i> VIEW</div>
+          </div>
+          <div class="wk-body">
+            <div class="wk-title">Task Title Here</div>
+            <div class="wk-desc">Short description of what this task covers.</div>
+            <div class="wk-meta">
+              <span class="wk-meta-tag">2025</span>
+              <span class="wk-meta-tag">PDF</span>
+            </div>
+          </div>
+          <div class="wk-footer">
+            <button class="wk-btn-view" onclick="openFile('YOUR_LINK_HERE','Task Title')">
+              <i class="fas fa-eye"></i> VIEW
+            </button>
+            <a class="wk-btn-dl" href="YOUR_DOWNLOAD_LINK" target="_blank">
+              <i class="fas fa-download"></i> DOWNLOAD
+            </a>
+          </div>
+        </div>
+      </div>
+      ── END CARD TEMPLATE ── -->
+
+      <!-- ─────────────────────────────────────────
+           SAMPLE CARD 1 — replace with your own
+      ───────────────────────────────────────────── -->
+      <div class="col-lg-4 col-md-6 work-item" data-category="practice">
+        <div class="wk-card">
+          <div class="wk-thumb" onclick="openFile('https://drive.google.com/file/d/REPLACE_WITH_YOUR_FILE_ID','Practice Task 1')">
+            <!-- Replace src with your screenshot URL, or remove <img> to show placeholder -->
+            <div class="wk-thumb-placeholder">
+              <i class="fas fa-file-pdf" style="font-size:2.5rem;color:rgba(255,0,64,0.5);"></i>
+              <span style="font-family:'Orbitron',sans-serif;font-size:0.6rem;color:rgba(255,255,255,0.3);letter-spacing:2px;">ADD SCREENSHOT</span>
+            </div>
+            <div class="wk-thumb-overlay"></div>
+            <span class="wk-num-badge">TASK-01</span>
+            <span class="wk-cat-badge" style="background:rgba(255,0,64,0.75);">PRACTICE</span>
+            <div class="wk-view-overlay"><i class="fas fa-eye"></i> VIEW</div>
+          </div>
+          <div class="wk-body">
+            <div class="wk-title">Practice Task 1</div>
+            <div class="wk-desc">Replace this with a description of what this practice task covers — the topic, tools used, or subject matter.</div>
+            <div class="wk-meta">
+              <span class="wk-meta-tag">2025</span>
+              <span class="wk-meta-tag">PDF</span>
+              <span class="wk-meta-tag">CS</span>
+            </div>
+          </div>
+          <div class="wk-footer">
+            <button class="wk-btn-view" onclick="openFile('https://drive.google.com/file/d/REPLACE_WITH_YOUR_FILE_ID','Practice Task 1')">
+              <i class="fas fa-eye"></i> VIEW
+            </button>
+            <a class="wk-btn-dl" href="https://drive.google.com/uc?export=download&id=REPLACE_WITH_YOUR_FILE_ID" target="_blank">
+              <i class="fas fa-download"></i> DOWNLOAD
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────
+           MIDTERM TASK CARD
+           HOW TO FILL IN:
+             1. FILE LINK   → replace PASTE_YOUR_GOOGLE_DRIVE_LINK_HERE in both onclick and href
+             2. SCREENSHOT  → replace YOUR_SCREENSHOT_URL with an Imgur or image link
+             3. TASK NUMBER → change TASK-01
+             4. TITLE       → change inside <div class="wk-title">
+             5. DESCRIPTION → change inside <div class="wk-desc">
+             6. META TAGS   → change date, file type, subject
+      ───────────────────────────────────────────── -->
+      <div class="col-lg-4 col-md-6 work-item" data-category="midterm">
+        <div class="wk-card">
+          <div class="wk-thumb" onclick="openFile('PASTE_YOUR_GOOGLE_DRIVE_LINK_HERE','Midterm Task 1')">
+            <!--
+              SCREENSHOT: Replace YOUR_SCREENSHOT_URL below with your image link.
+              Example: https://i.imgur.com/abc123.png
+            -->
+            <img src="YOUR_SCREENSHOT_URL" alt="Midterm Task 1 Screenshot"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                 style="width:100%;height:100%;object-fit:cover;display:block;">
+            <div class="wk-thumb-placeholder" style="display:none;">
+              <i class="fas fa-file-word" style="font-size:2.5rem;color:rgba(43,124,211,0.6);"></i>
+              <span style="font-family:'Orbitron',sans-serif;font-size:0.6rem;color:rgba(255,255,255,0.3);letter-spacing:2px;">NO SCREENSHOT</span>
+            </div>
+            <div class="wk-thumb-overlay"></div>
+            <span class="wk-num-badge">TASK-01</span>
+            <span class="wk-cat-badge" style="background:rgba(123,0,255,0.75);">MIDTERM</span>
+            <div class="wk-view-overlay"><i class="fas fa-eye"></i> VIEW</div>
+          </div>
+          <div class="wk-body">
+            <div class="wk-title">Midterm Task 1</div>
+            <div class="wk-desc">Replace this with a description of what this midterm task covers.</div>
+            <div class="wk-meta">
+              <span class="wk-meta-tag">2025</span>
+              <span class="wk-meta-tag">WORD</span>
+              <span class="wk-meta-tag">CS</span>
+            </div>
+          </div>
+          <div class="wk-footer">
+            <!--
+              FILE LINK: Paste your Google Drive link in BOTH places below.
+            -->
+            <button class="wk-btn-view" onclick="openFile('PASTE_YOUR_GOOGLE_DRIVE_LINK_HERE','Midterm Task 1')">
+              <i class="fas fa-eye"></i> VIEW
+            </button>
+            <a class="wk-btn-dl" href="PASTE_YOUR_GOOGLE_DRIVE_LINK_HERE" target="_blank">
+              <i class="fas fa-download"></i> DOWNLOAD
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /worksGrid -->
+
+    <div class="empty-state d-none" id="emptyState">
+      <i class="fas fa-folder-open"></i>
+      <p>NO WORKS IN THIS CATEGORY YET</p>
+    </div>
+  </div>
+</section>
+
+<!-- PDF Viewer Modal -->
+
+
+<div id="pdfModal">
+  <div class="pdf-modal-inner">
+    <div class="pdf-modal-header">
+      <span class="pdf-modal-title" id="pdfModalTitle">Document</span>
+      <div class="d-flex align-items-center gap-2">
+        <a id="pdfDownloadBtn" href="#" target="_blank"
+           style="background: rgba(0,255,65,0.15); border: 1px solid #00ff41; color: #00ff41; font-family:'Orbitron',sans-serif; font-size:0.6rem; border-radius:30px; padding:6px 14px; text-decoration:none; letter-spacing:1px; white-space:nowrap;">
+          <i class="fas fa-download me-1"></i>DOWNLOAD
+        </a>
+        <button class="pdf-modal-close" onclick="closePDF()" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+    <iframe id="pdfFrame" src="" title="PDF Viewer"></iframe>
+  </div>
+</div>
+
+
+<!-- Contact Form -->
+<section id="contact" class="py-5" style="font-family: 'Orbitron', sans-serif;">
+  <div class="container">
+    <h2 class="text-center mb-4" style="color: #ff0040;"><strong>Contact Me</strong></h2>
+    <form class="mx-auto" style="max-width: 600px; background-color: rgba(0, 0, 0, 0.5); padding: 30px; border-radius: 10px;">
+      <div class="mb-3"><label class="form-label text-light">Name</label><input type="text" class="form-control" placeholder="Your Name" required></div>
+      <div class="mb-3"><label class="form-label text-light">Email</label><input type="email" class="form-control" placeholder="Your Email" required></div>
+      <div class="mb-3"><label class="form-label text-light">Subject</label><input type="text" class="form-control" placeholder="Subject" required></div>
+      <div class="mb-3"><label class="form-label text-light">Message</label><textarea class="form-control" rows="4" placeholder="Your Message" required></textarea></div>
+      <button type="submit" class="btn" style="background-color: #ff0040; color: white; font-weight: bold; padding: 15px 30px; border-radius: 50px; width: 100%; text-transform: uppercase; letter-spacing: 2px;">Send Message</button>
+    </form>
+  </div>
+  <div class="social-links text-center mt-4">
+    <a href="https://www.instagram.com/alenorrrrrr/" target="_blank" class="me-3" style="color: #E4405F;"><i class="fab fa-instagram fa-2x"></i></a>
+    <a href="https://web.facebook.com/antapalenor" target="_blank" style="color: #1877F2;"><i class="fab fa-facebook fa-2x"></i></a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="text-center py-3" style="background-color: rgba(0, 0, 0, 0.6); color: white;">
+  <div>© 2025 Alenor's Portfolio. All rights reserved.</div>
+</footer>
+
+<script>
+  // ── File viewer modal ─────────────────────────────
+  function openFile(url, title) {
+    url = convertDriveLink(url);
+    document.getElementById('pdfModalTitle').textContent = title || 'Document';
+    document.getElementById('pdfFrame').src = url;
+    document.getElementById('pdfDownloadBtn').href = convertDriveToDownload(url);
+    document.getElementById('pdfModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePDF() {
+    document.getElementById('pdfModal').classList.remove('show');
+    document.getElementById('pdfFrame').src = '';
+    document.body.style.overflow = '';
+  }
+  function convertDriveLink(url) {
+    const m = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    return m ? 'https://drive.google.com/file/d/' + m[1] + '/preview' : url;
+  }
+  function convertDriveToDownload(url) {
+    const m = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    return m ? 'https://drive.google.com/uc?export=download&id=' + m[1] : url;
+  }
+  document.getElementById('pdfModal').addEventListener('click', e => { if (e.target === document.getElementById('pdfModal')) closePDF(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePDF(); });
+
+  // ── Filter pills ──────────────────────────────────
+  document.querySelectorAll('.filter-pill').forEach(pill => {
+    pill.addEventListener('click', function () {
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      this.classList.add('active');
+      const filter = this.dataset.filter;
+      let visible = 0;
+      document.querySelectorAll('.work-item').forEach(item => {
+        const show = item.dataset.category === filter;
+        item.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      document.getElementById('emptyState').classList.toggle('d-none', visible > 0);
+    });
+  });
+</script>
+</body>
+</html>
